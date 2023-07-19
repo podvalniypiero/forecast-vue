@@ -9,3 +9,7 @@ export const toUpperCaseFirst = (string) => {
 export const getPressureMm = (hpa) => {
     return Math.round(hpa * PRESSURE_UNITS) // hpa => mm for Pressure measuring
 }
+
+export const getTime = (sec) => {
+    return new Date( sec * 1000 ).toLocaleTimeString('ru-RU',{ timeZone: 'Atlantic/Reykjavik'}) // standard point
+}
