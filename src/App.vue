@@ -35,7 +35,7 @@ function getWeather() {
                 </div>
               </section>
               <section class="section section-right">
-                <Highlights/>
+                <Highlights :weatherInfo="weatherInfo"/>
               </section> 
             </div>
             <div v-if="weatherInfo?.weather" class="sections">
