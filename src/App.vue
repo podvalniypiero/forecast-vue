@@ -8,7 +8,7 @@ const city = ref('Moscow') // можно брать из localStorage
 const weatherInfo = ref(null)
 
 function getWeather() {
-  fetch(`${BASE_URL}?q=${city.value}&appid=${API_KEY}`)
+  fetch(`${BASE_URL}?q=${city.value}&units=metric&appid=${API_KEY}`)
     .then((response) => response.json())
     .then((data)=> weatherInfo.value = data)
 }
@@ -28,7 +28,7 @@ function getWeather() {
                     <input v-model = "city" type="text" class="search"
                      @keyup="getWeather">
                   </div>
-                <WeatherSummary />
+                <WeatherSummary :weatherInfo="weatherInfo" />
                 </div>
               </section>
               <section class="section section-right">
