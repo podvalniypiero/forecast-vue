@@ -4,11 +4,13 @@
  import Highlights from './components/Highlights.vue';
  import WeatherSummary from './components/WeatherSummary.vue';
  import { API_KEY, BASE_URL } from './constants'
- import { ref, onMounted } from 'vue'
+ import { ref, onMounted, computed } from 'vue'
+ import { toUpperCaseFirst } from './utils';
  
 
 const city = ref('Moscow') // можно брать из localStorage
 const weatherInfo = ref(null)
+const isError = computed(() => weatherInfo.value?.cod !== 200);
 
 function getWeather() {
   fetch(`${BASE_URL}?q=${city.value}&units=metric&appid=${API_KEY}`)
@@ -24,23 +26,41 @@ function getWeather() {
         <div class="container">
           <div class="laptop">
             <div class="sections">
-              <section class="section section-left">
+              
+              <section :class="['section', 'section-left', { 'section-error': isError }]">
                 <div class="info">
                   {{ city }}
                   <div class="city-inner">
+                    
                     <input v-model = "city" type="text" class="search"
                      @keyup="getWeather">
+
                   </div>
-                <WeatherSummary :weatherInfo="weatherInfo" />
+                <WeatherSummary 
+                v-if="!isError"
+                :weatherInfo="weatherInfo" 
+                />
+                <div v-else class="error">
+                  <div class="error-title">
+                    Sorry, something went wrong...
+                  </div>
+                  <div v-if="weatherInfo?.message" class="error-message">
+                    {{ toUpperCaseFirst(weatherInfo?.message) }}
+                  </div>
+                </div>
                 </div>
               </section>
-              <section class="section section-right">
+              <section 
+              v-if ="!isError" 
+              class="section section-right">
                 <Highlights :weatherInfo="weatherInfo"/>
               </section> 
             </div>
-            <div v-if="weatherInfo?.weather" class="sections">
-              <Coords :coord="weatherInfo.coord"/>
-              <Humidity :humidity="weatherInfo.main.humidity"/>
+            <div 
+              v-if="!isError" 
+              class="sections">
+                <Coords :coord="weatherInfo.coord"/>
+                <Humidity :humidity="weatherInfo.main.humidity"/>
               
             </div>
           </div>
@@ -79,6 +99,10 @@ function getWeather() {
 
   @media (max-width: 767px)
     width: 100%
+    padding-right: 0
+  &.section-error
+    min-width: 235px
+    width: auto
     padding-right: 0
 
 .section-right
@@ -131,4 +155,16 @@ function getWeather() {
 
   @media (max-width: 767px)
     width: 100%
+
+.error
+  padding-top: 20px
+
+  &-title 
+    font-size: 18px
+    font-weight: 700
+
+  &-message 
+    padding-top: 10px
+    font-size: 18px
+    font-size: 300
 </style>
